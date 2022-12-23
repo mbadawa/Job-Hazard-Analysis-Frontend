@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -13,60 +14,121 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
-import dayjs from 'dayjs';
-
 import Button from '@mui/material/Button';
 
 import { useState } from 'react';
 function Form() {
-  const [expanded, setExpanded] = React.useState('generalInfo');
-
+  // Handles All the General Information inputs
+  const [generalInfo, setGeneralInfo] = useState({
+    fullName: '',
+    superVisorName: '',
+    companyName: '',
+    projectName: '',
+    projectDate: new Date().toLocaleDateString(),
+    operation: '',
+    departmentOrUnit: '',
+    location: '',
+    indoorOrOutdoor: '',
+    trainingRequired: '',
+    equipmentUsed: '',
+    chemicalsUsed: '',
+    additionalComments: '',
+  });
+  const handleGeneralInformationChange = (e) => {
+    const { name, value } = e.target;
+    setGeneralInfo((prev) => {
+      return { ...prev, [name]: value };
+    });
+  };
+  const [expanded, setExpanded] = useState('generalInfo');
   const handleAccordionPanel = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
-  const [employees, setEmployees] = useState([
+  const [employee, setEmployee] = useState([
     { employeeName: '', employeeID: '', employeeCertifications: '' },
   ]);
-  const [analysis, setAnalysis] = useState([
+
+  const [analysisArray, setAnalysisArray] = useState([
     { activity: '', potentialHazards: '', proceduresEquipmentTraining: '' },
   ]);
   const handleAddEmployee = () => {
-    setEmployees([...employees, { employeeName: '', employeeID: '' }]);
+    setEmployee([...employee, { employeeName: '', employeeID: '' }]);
   };
   const handleRemoveEmployee = (index) => {
-    const list = [...employees];
+    const list = [...employee];
     list.splice(index, 1);
-    setEmployees(list);
+    setEmployee(list);
   };
   const handleEmployeeUpdate = (e, index) => {
     const { name, value } = e.target;
-    const list = [...employees];
+    const list = [...employee];
     list[index][name] = value;
-    setEmployees(list);
+    setEmployee(list);
   };
 
   const handleAddAnalysis = () => {
-    setAnalysis([
-      ...analysis,
+    setAnalysisArray([
+      ...analysisArray,
       { activity: '', potentialHazards: '', proceduresEquipmentTraining: '' },
     ]);
   };
   const handleRemoveAnalysis = (index) => {
-    const list = [...analysis];
+    const list = [...analysisArray];
     list.splice(index, 1);
-    setAnalysis(list);
+    setAnalysisArray(list);
   };
   const handleAnalysisChange = (e, index) => {
     const { name, value } = e.target;
-    const list = [...analysis];
+    const list = [...analysisArray];
     list[index][name] = value;
-    setAnalysis(list);
+    setAnalysisArray(list);
   };
-  const [value, setValue] = React.useState(new Date().toLocaleDateString());
 
-  const handleChange = (newValue) => {
-    setValue(newValue);
-  };
+  function submitForm() {
+    const employees = JSON.stringify(employee);
+    const analysis = JSON.stringify(analysisArray);
+    const {
+      fullName,
+      superVisorName,
+      companyName,
+      projectName,
+      projectDate,
+      operation,
+      departmentOrUnit,
+      location,
+      indoorOrOutdoor,
+      trainingRequired,
+      equipmentUsed,
+      chemicalsUsed,
+      additionalComments,
+    } = generalInfo;
+    const payload = {
+      fullName,
+      superVisorName,
+      companyName,
+      projectName,
+      projectDate,
+      operation,
+      departmentOrUnit,
+      location,
+      indoorOrOutdoor,
+      trainingRequired,
+      equipmentUsed,
+      chemicalsUsed,
+      additionalComments,
+      employees,
+      analysis,
+    };
+    axios
+      .post('http://localhost:5000/api/createJHA', payload)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    console.log(payload);
+  }
   return (
     <form className="container ml-auto mr-auto mt-5" action="">
       <Accordion
@@ -91,85 +153,142 @@ function Form() {
                 className="w-full"
                 id=""
                 label="Full Name"
+                name="fullName"
                 variant="filled"
                 placeholder="Please enter your name"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.fullName}
               />
               <TextField
                 className="w-full"
                 id=""
+                name="superVisorName"
                 label="Supervisor Name"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.superVisorName}
               />
             </div>
             <div className="md:flex grid grid-rows-2 gap-3">
               <TextField
                 className="w-full"
                 id=""
+                name="companyName"
                 label="Company Name"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.companyName}
               />
               <TextField
                 className="w-full"
                 id=""
+                name="projectName"
                 label="Project Name"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.projectName}
               />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider
+                name="projectDate"
+                dateAdapter={AdapterDayjs}
+              >
                 <DesktopDatePicker
                   className="w-full"
                   label="Project Date"
                   inputFormat="MM/DD/YYYY"
                   variant="filled"
                   TextFieldProps={{ variant: 'filled' }}
-                  value={value}
-                  onChange={handleChange}
+                  name="projectDate"
+                  value={generalInfo.projectDate}
+                  onChange={(date) =>
+                    handleGeneralInformationChange({
+                      target: { value: date, name: 'projectDate' },
+                    })
+                  }
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
               <TextField
                 className="w-full"
                 id=""
+                name="operation"
                 label="Operation"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.operation}
               />
             </div>
             <div className="md:flex grid grid-rows-2 gap-3">
               <TextField
                 className="w-full"
                 id=""
+                name="departmentOrUnit"
                 label="Department/Unit"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.departmentOrUnit}
               />
               <TextField
                 className="w-full"
                 id=""
+                name="location"
                 label="Location"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.location}
               />
-              <FormControlLabel control={<Checkbox />} label="Indoor" />
-              <FormControlLabel control={<Checkbox />} label="Outdoor" />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Indoor"
+                value={'indoor'}
+                name="indoorOrOutdoor"
+                onChange={(e) => handleGeneralInformationChange(e)}
+              />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Outdoor"
+                value={'outdoor'}
+                name="indoorOrOutdoor"
+                onChange={(e) => handleGeneralInformationChange(e)}
+              />
             </div>
             <div className="md:flex grid grid-rows-2 gap-3">
               <TextField
                 className="w-full"
                 id=""
+                name="trainingRequired"
                 label="Training required"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.trainingRequired}
               />
               <TextField
                 className="w-full"
                 id=""
+                name="equipmentUsed"
                 label="Equipment used"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.equipmentUsed}
               />
               <TextField
                 className="w-full"
                 id=""
+                name="chemicalsUsed"
                 label="Chemicals used"
                 variant="filled"
+                onChange={(e) => handleGeneralInformationChange(e)}
+                value={generalInfo.chemicalsUsed}
               />
             </div>
-            <TextField id="" label="Additional comments" variant="filled" />
+            <TextField
+              id=""
+              name="additionalComments"
+              label="Additional comments"
+              variant="filled"
+              onChange={(e) => handleGeneralInformationChange(e)}
+              value={generalInfo.additionalComments}
+            />
           </Box>
         </AccordionDetails>
       </Accordion>
@@ -184,28 +303,28 @@ function Form() {
           <Typography sx={{ color: 'black' }}>Employees</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <div class="overflow-x-auto relative">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead class="text-xs text-gray-700 uppercase bg-gray-100 ">
+          <div className="overflow-x-auto relative">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-100 ">
                 <tr>
-                  <th scope="col" class="py-3 px-6">
+                  <th scope="col" className="py-3 px-6">
                     Full Name
                   </th>
 
-                  <th scope="col" class="py-3 px-6">
+                  <th scope="col" className="py-3 px-6">
                     Employee ID
                   </th>
-                  <th scope="col" class="py-3 px-6">
+                  <th scope="col" className="py-3 px-6">
                     Certifications
                   </th>
                 </tr>
               </thead>
               <tbody className="">
-                {employees.map((employee, index) => (
-                  <tr key={index} class="bg-gray-50 shadow border-b ">
+                {employee.map((object, index) => (
+                  <tr key={index} className="bg-gray-50 shadow border-b ">
                     <th
                       scope="row"
-                      class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap"
+                      className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap"
                     >
                       <TextField
                         id=""
@@ -214,11 +333,11 @@ function Form() {
                         className="w-full"
                         autoComplete="off"
                         name="employeeName"
-                        value={employee.employeeName}
+                        value={object.employeeName}
                         onChange={(e) => handleEmployeeUpdate(e, index)}
                       />
                     </th>
-                    <td class="py-4 px-6">
+                    <td className="py-4 px-6">
                       <TextField
                         id=""
                         label="Employee ID"
@@ -226,11 +345,11 @@ function Form() {
                         className="w-full"
                         autoComplete="off"
                         name="employeeID"
-                        value={employee.employeeID}
+                        value={object.employeeID}
                         onChange={(e) => handleEmployeeUpdate(e, index)}
                       />
                     </td>
-                    <td class="py-4 px-6 flex items-center gap-3">
+                    <td className="py-4 px-6 flex items-center gap-3">
                       <TextField
                         id=""
                         label="Employee Certifications"
@@ -239,10 +358,10 @@ function Form() {
                         className="w-full"
                         autoComplete="off"
                         name="employeeCertifications"
-                        value={employee.employeeCertifications}
+                        value={object.employeeCertifications}
                         onChange={(e) => handleEmployeeUpdate(e, index)}
                       />
-                      {employees.length > 1 && (
+                      {employee.length > 1 && (
                         <ClearIcon
                           className="cursor-pointer"
                           sx={{ color: 'red' }}
@@ -255,22 +374,26 @@ function Form() {
                     </td>
                   </tr>
                 ))}
-                <Button
-                  sx={{
-                    marginTop: '10px',
-                    background: '#439243',
-                    ':hover': {
-                      background: '#469746',
-                    },
-                  }}
-                  variant="contained"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddEmployee();
-                  }}
-                >
-                  Add Employee
-                </Button>
+                <tr>
+                  <td>
+                    <Button
+                      sx={{
+                        marginTop: '10px',
+                        background: '#439243',
+                        ':hover': {
+                          background: '#469746',
+                        },
+                      }}
+                      variant="contained"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleAddEmployee();
+                      }}
+                    >
+                      Add Employee
+                    </Button>
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -287,27 +410,27 @@ function Form() {
           <Typography sx={{ color: 'black' }}>Analysis</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <div class="overflow-x-auto relative">
-            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead class="text-xs text-gray-700 uppercase bg-gray-100 ">
+          <div className="overflow-x-auto relative">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-100 ">
                 <tr>
-                  <th scope="col" class="py-3 px-6">
+                  <th scope="col" className="py-3 px-6">
                     Activity
                   </th>
-                  <th scope="col" class="py-3 px-6">
+                  <th scope="col" className="py-3 px-6">
                     Potential Hazards
                   </th>
-                  <th scope="col" class="py-3 px-6">
+                  <th scope="col" className="py-3 px-6">
                     Procedures/Equipment/Training
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {analysis.map((myAnalysis, index) => (
-                  <tr key={index} class="bg-gray-50 shadow border-b ">
+                {analysisArray.map((myAnalysis, index) => (
+                  <tr key={index} className="bg-gray-50 shadow border-b ">
                     <th
                       scope="row"
-                      class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap"
+                      className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap"
                     >
                       <TextField
                         id=""
@@ -320,7 +443,7 @@ function Form() {
                         value={myAnalysis.activity}
                       />
                     </th>
-                    <td class="py-4 px-6">
+                    <td className="py-4 px-6">
                       <TextField
                         id=""
                         label="Potential Hazards"
@@ -332,7 +455,7 @@ function Form() {
                         value={myAnalysis.potentialHazards}
                       />
                     </td>
-                    <td class="py-4 px-6 flex items-center gap-3">
+                    <td className="py-4 px-6 flex items-center gap-3">
                       <TextField
                         id=""
                         label="Procedures/Equipment/Training"
@@ -343,7 +466,7 @@ function Form() {
                         onChange={(e) => handleAnalysisChange(e, index)}
                         value={myAnalysis.proceduresEquipmentTraining}
                       />
-                      {analysis.length > 1 && (
+                      {analysisArray.length > 1 && (
                         <ClearIcon
                           className="cursor-pointer"
                           sx={{ color: 'red' }}
@@ -356,23 +479,27 @@ function Form() {
                     </td>
                   </tr>
                 ))}
+                <tr>
+                  <td>
+                    <Button
+                      sx={{
+                        marginTop: '10px',
+                        background: '#439243',
+                        ':hover': {
+                          background: '#469746',
+                        },
+                      }}
+                      variant="contained"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleAddAnalysis();
+                      }}
+                    >
+                      Add Employee
+                    </Button>
+                  </td>
+                </tr>
               </tbody>
-              <Button
-                sx={{
-                  marginTop: '10px',
-                  background: '#439243',
-                  ':hover': {
-                    background: '#469746',
-                  },
-                }}
-                variant="contained"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleAddAnalysis();
-                }}
-              >
-                Add Employee
-              </Button>
             </table>
           </div>
         </AccordionDetails>
@@ -384,7 +511,7 @@ function Form() {
         variant="contained"
         onClick={(e) => {
           e.preventDefault();
-          handleAddAnalysis();
+          submitForm();
         }}
       >
         Submit
@@ -394,28 +521,3 @@ function Form() {
 }
 
 export default Form;
-
-{
-  /* <span className="flex flex-col gap-2">
-<label htmlFor="task_date" className="font-bold">
-  Date
-</label>
-<span className="flex items-center bg-gray-100 p-3">
-  <Flatpickr
-    id="task_date"
-    className="bg-gray-100 focus:outline-none"
-    placeholder="MM/DD/YYYY"
-    options={{
-      minDate: currentDate,
-      allowInput: false,
-      dateFormat: 'm/d/Y',
-    }}
-    value={date}
-    onChange={([date]) => {
-      this.setState({ date });
-    }}
-  />
-  <BsCalendar3 />
-</span>
-</span> */
-}

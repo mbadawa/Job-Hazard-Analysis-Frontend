@@ -1,17 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
 import './css/main.css';
 // Importing routes for pages
 import Jobs from './pages/jobs';
 import Home from './pages/Home';
 import NewJHA from './pages/NewJHA';
-// const theme = createTheme({
-//   palette: {
-//     primary: 'blue',
-//   },
-// });
+
 const router = createBrowserRouter([
   {
     path: '/jobs',
