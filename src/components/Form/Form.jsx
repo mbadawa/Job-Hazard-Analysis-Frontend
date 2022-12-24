@@ -18,6 +18,8 @@ import Button from "@mui/material/Button";
 
 import { useState } from "react";
 function Form() {
+	const [expanded, setExpanded] = useState("generalInfo");
+
 	// Handles All the General Information inputs
 	const [generalInfo, setGeneralInfo] = useState({
 		fullName: "",
@@ -35,12 +37,12 @@ function Form() {
 		additionalComments: "",
 	});
 	const handleGeneralInformationChange = (e) => {
+		console.log(generalInfo);
 		const { name, value } = e.target;
 		setGeneralInfo((prev) => {
 			return { ...prev, [name]: value };
 		});
 	};
-	const [expanded, setExpanded] = useState("generalInfo");
 	const handleAccordionPanel = (panel) => (event, newExpanded) => {
 		setExpanded(newExpanded ? panel : false);
 	};
@@ -142,12 +144,7 @@ function Form() {
 					<Typography sx={{ color: "black" }}>General Informations</Typography>
 				</AccordionSummary>
 				<AccordionDetails>
-					<Box
-						className="flex flex-col gap-7"
-						component="form"
-						noValidate
-						autoComplete="off"
-					>
+					<Box className="flex flex-col gap-7" noValidate autoComplete="off">
 						<div className="md:flex grid grid-rows-2 gap-3">
 							<TextField
 								className="w-full"
@@ -242,14 +239,14 @@ function Form() {
 								label="Indoor"
 								value={"indoor"}
 								name="indoorOrOutdoor"
-								onChange={(e) => handleGeneralInformationChange(e)}
+								onClick={(e) => handleGeneralInformationChange(e)}
 							/>
 							<FormControlLabel
 								control={<Checkbox />}
 								label="Outdoor"
 								value={"outdoor"}
 								name="indoorOrOutdoor"
-								onChange={(e) => handleGeneralInformationChange(e)}
+								onClick={(e) => handleGeneralInformationChange(e)}
 							/>
 						</div>
 						<div className="md:flex grid grid-rows-2 gap-3">
