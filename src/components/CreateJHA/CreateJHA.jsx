@@ -18,6 +18,11 @@ import Button from "@mui/material/Button";
 
 import { useState } from "react";
 function Form() {
+	const [expanded, setExpanded] = useState("generalInfo");
+	const handleAccordionPanel = (panel) => (event, newExpanded) => {
+		setExpanded(newExpanded ? panel : false);
+	};
+
 	// Handles All the General Information inputs
 	const [generalInfo, setGeneralInfo] = useState({
 		fullName: "",
@@ -29,6 +34,7 @@ function Form() {
 		departmentOrUnit: "",
 		location: "",
 		indoorOrOutdoor: "",
+		ppeRequired: "",
 		trainingRequired: "",
 		equipmentUsed: "",
 		chemicalsUsed: "",
@@ -40,16 +46,10 @@ function Form() {
 			return { ...prev, [name]: value };
 		});
 	};
-	const [expanded, setExpanded] = useState("generalInfo");
-	const handleAccordionPanel = (panel) => (event, newExpanded) => {
-		setExpanded(newExpanded ? panel : false);
-	};
+
+	// Handle employee section dynamic inputs etc
 	const [employee, setEmployee] = useState([
 		{ employeeName: "", employeeID: "", employeeCertifications: "" },
-	]);
-
-	const [analysisArray, setAnalysisArray] = useState([
-		{ activity: "", potentialHazards: "", proceduresEquipmentTraining: "" },
 	]);
 	const handleAddEmployee = () => {
 		setEmployee([...employee, { employeeName: "", employeeID: "" }]);
@@ -66,6 +66,10 @@ function Form() {
 		setEmployee(list);
 	};
 
+	// Handles analysis section dynamic inputs etc
+	const [analysisArray, setAnalysisArray] = useState([
+		{ activity: "", potentialHazards: "", proceduresEquipmentTraining: "" },
+	]);
 	const handleAddAnalysis = () => {
 		setAnalysisArray([
 			...analysisArray,
@@ -84,53 +88,21 @@ function Form() {
 		setAnalysisArray(list);
 	};
 
+	// SUBMITS FORM
 	function submitForm() {
-		const employees = JSON.stringify(employee);
-		const analysis = JSON.stringify(analysisArray);
-		const {
-			fullName,
-			superVisorName,
-			companyName,
-			projectName,
-			projectDate,
-			operation,
-			departmentOrUnit,
-			location,
-			indoorOrOutdoor,
-			trainingRequired,
-			equipmentUsed,
-			chemicalsUsed,
-			additionalComments,
-		} = generalInfo;
-		const payload = {
-			fullName,
-			superVisorName,
-			companyName,
-			projectName,
-			projectDate,
-			operation,
-			departmentOrUnit,
-			location,
-			indoorOrOutdoor,
-			trainingRequired,
-			equipmentUsed,
-			chemicalsUsed,
-			additionalComments,
-			employees,
-			analysis,
-		};
+		generalInfo.employees = JSON.stringify(employee);
+		generalInfo.analysis = JSON.stringify(analysisArray);
 		axios
-			.post("http://localhost:5000/api/createJHA", payload)
-			.then(function (response) {
-				console.log(response);
+			.post("http://localhost:5000/api/createJHA", generalInfo)
+			.then(function (res) {
+				console.log(res);
 			})
 			.catch(function (error) {
 				console.log(error);
 			});
-		console.log(payload);
 	}
 	return (
-		<form className="container ml-auto mr-auto mt-5" action="">
+		<form className="container ml-auto mr-auto mt-5">
 			<Accordion
 				expanded={expanded === "generalInfo"}
 				onChange={handleAccordionPanel("generalInfo")}
@@ -242,6 +214,9 @@ function Form() {
 								label="Indoor"
 								value={"indoor"}
 								name="indoorOrOutdoor"
+								checked={
+									generalInfo.indoorOrOutdoor === "indoor" ? true : false
+								}
 								onChange={(e) => handleGeneralInformationChange(e)}
 							/>
 							<FormControlLabel
@@ -249,6 +224,9 @@ function Form() {
 								label="Outdoor"
 								value={"outdoor"}
 								name="indoorOrOutdoor"
+								checked={
+									generalInfo.indoorOrOutdoor === "outdoor" ? true : false
+								}
 								onChange={(e) => handleGeneralInformationChange(e)}
 							/>
 						</div>
@@ -256,8 +234,17 @@ function Form() {
 							<TextField
 								className="w-full"
 								id=""
+								name="ppeRequired"
+								label="PPE Required"
+								variant="filled"
+								onChange={(e) => handleGeneralInformationChange(e)}
+								value={generalInfo.ppeRequired}
+							/>
+							<TextField
+								className="w-full"
+								id=""
 								name="trainingRequired"
-								label="Training required"
+								label="Training Required"
 								variant="filled"
 								onChange={(e) => handleGeneralInformationChange(e)}
 								value={generalInfo.trainingRequired}
@@ -505,6 +492,7 @@ function Form() {
 				</AccordionDetails>
 			</Accordion>
 			<Button
+				type="submit"
 				sx={{
 					marginTop: "10px",
 				}}
