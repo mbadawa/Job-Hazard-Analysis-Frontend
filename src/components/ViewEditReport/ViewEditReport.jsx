@@ -720,7 +720,7 @@ function ViewReport(props) {
               onClick={() => {
                 document.querySelector('.dialog_container').style.display =
                   'none';
-                handleUnDisableFields();
+                setDisableFields(true);
               }}
             >
               Close
