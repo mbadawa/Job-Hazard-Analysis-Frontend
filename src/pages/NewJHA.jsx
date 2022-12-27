@@ -7,6 +7,7 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 
 import Button from "@mui/material/Button";
 import { useState, useEffect } from "react";
@@ -19,7 +20,6 @@ import { IoClose } from "react-icons/io5";
 import AnalysisForm from "../components/AnalysisForm/AnalysisForm";
 import EmployeesForm from "../components/EmployeesForm/EmployeesForm";
 import GeneralInformationsForm from "../components/GeneralInformationsForm/GeneralInformationsForm";
-import { Helmet } from "react-helmet";
 import Footer from "../components/Footer/Footer";
 
 function NewTask() {
@@ -94,10 +94,13 @@ function NewTask() {
 	}, [data.isSubmitting]);
 	return (
 		<div>
-			<Helmet>
-				<meta charSet="utf-8" />
-				<title>Create new job hazard analysis</title>
-			</Helmet>
+			<HelmetProvider>
+				<Helmet>
+					<meta charSet="utf-8" />
+					<title>Create new job hazard analysis</title>
+				</Helmet>
+			</HelmetProvider>
+
 			<Navbar />
 			<Title title="New Job Hazard Analysis" />
 			<form

@@ -44,7 +44,7 @@ function ViewReport(props) {
 		axios
 			.get(`http://localhost:5000/api/findreport/${props.id}`)
 			.then((res) => {
-				if (res.data !== "") {
+				if (res.data) {
 					let { employees, analysis, indoorOrOutdoor } = res?.data;
 					res.data.indoorOrOutdoor = JSON.parse(indoorOrOutdoor);
 					setReportData(res.data);

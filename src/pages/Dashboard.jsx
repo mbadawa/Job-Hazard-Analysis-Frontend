@@ -11,7 +11,7 @@ import CustomeModal from "../components/CustomModal/CustomeModal";
 import MuiAlert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { IoClose } from "react-icons/io5";
-import { Helmet } from "react-helmet";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import Footer from "../components/Footer/Footer";
 
 function Dashboard() {
@@ -152,10 +152,13 @@ function Dashboard() {
 	};
 	return (
 		<div className="relative">
-			<Helmet>
-				<meta charSet="utf-8" />
-				<title>Dasshobard</title>
-			</Helmet>
+			<HelmetProvider>
+				<Helmet>
+					<meta charSet="utf-8" />
+					<title>Dasshobard</title>
+				</Helmet>
+			</HelmetProvider>
+
 			{/* Top Navbar */}
 			<Navbar />
 			<Title title={"All Reports"} />
