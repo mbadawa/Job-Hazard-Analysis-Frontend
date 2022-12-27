@@ -124,8 +124,12 @@ function ViewReport(props) {
   });
 
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-  }, [data.errors]);
+    if (data.errors !== {}) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      setExpanded('generalInfo');
+      handleAccordionPanel('generalInfo');
+    }
+  }, [data.isSubmitting === false]);
   return (
     <div className="dialog_container">
       <form
