@@ -3,24 +3,24 @@ import TextField from "@mui/material/TextField";
 import ClearIcon from "@mui/icons-material/Clear";
 import Button from "@mui/material/Button";
 
-function AnalysisForm(props) {
+function AnalysisForm({ analysisArray, setAnalysisArray, disableFields }) {
 	// Handles analysis section dynamic inputs etc
 	const handleAddAnalysis = () => {
-		props.setAnalysisArray([
-			...props.analysisArray,
+		setAnalysisArray([
+			...analysisArray,
 			{ activity: "", potentialHazards: "", proceduresEquipmentTraining: "" },
 		]);
 	};
 	const handleAnalysisChange = (e, index) => {
 		const { name, value } = e.target;
-		const list = [...props.analysisArray];
+		const list = [...analysisArray];
 		list[index][name] = value;
-		props.setAnalysisArray(list);
+		setAnalysisArray(list);
 	};
 	const handleRemoveAnalysis = (index) => {
-		const list = [...props.analysisArray];
+		const list = [...analysisArray];
 		list.splice(index, 1);
-		props.setAnalysisArray(list);
+		setAnalysisArray(list);
 	};
 	return (
 		<div className="overflow-x-auto relative">
@@ -39,14 +39,13 @@ function AnalysisForm(props) {
 					</tr>
 				</thead>
 				<tbody>
-					{props.analysisArray.map((myAnalysis, index) => (
+					{analysisArray.map((myAnalysis, index) => (
 						<tr key={index} className="bg-gray-50 shadow border-b ">
 							<th
 								scope="row"
 								className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap"
 							>
 								<TextField
-									id=""
 									label="Activity"
 									variant="filled"
 									className="w-full"
@@ -54,12 +53,11 @@ function AnalysisForm(props) {
 									name="activity"
 									onChange={(e) => handleAnalysisChange(e, index)}
 									value={myAnalysis.activity}
-									disabled={props.disableFields}
+									disabled={disableFields}
 								/>
 							</th>
 							<td className="py-4 px-6">
 								<TextField
-									id=""
 									label="Potential Hazards"
 									variant="filled"
 									className="w-full"
@@ -67,12 +65,11 @@ function AnalysisForm(props) {
 									name="potentialHazards"
 									onChange={(e) => handleAnalysisChange(e, index)}
 									value={myAnalysis.potentialHazards}
-									disabled={props.disableFields}
+									disabled={disableFields}
 								/>
 							</td>
 							<td className="py-4 px-6 flex items-center gap-3">
 								<TextField
-									id=""
 									label="Procedures/Equipment/Training"
 									variant="filled"
 									className="w-full"
@@ -80,19 +77,18 @@ function AnalysisForm(props) {
 									name="proceduresEquipmentTraining"
 									onChange={(e) => handleAnalysisChange(e, index)}
 									value={myAnalysis.proceduresEquipmentTraining}
-									disabled={props.disableFields}
+									disabled={disableFields}
 								/>
-								{props.analysisArray.length > 1 &&
-									props.disableFields === false && (
-										<ClearIcon
-											className="cursor-pointer"
-											sx={{ color: "red" }}
-											onClick={(e) => {
-												e.preventDefault();
-												handleRemoveAnalysis(index);
-											}}
-										/>
-									)}
+								{analysisArray.length > 1 && disableFields === false && (
+									<ClearIcon
+										className="cursor-pointer"
+										sx={{ color: "red" }}
+										onClick={(e) => {
+											e.preventDefault();
+											handleRemoveAnalysis(index);
+										}}
+									/>
+								)}
 							</td>
 						</tr>
 					))}
@@ -111,7 +107,7 @@ function AnalysisForm(props) {
 									e.preventDefault();
 									handleAddAnalysis();
 								}}
-								disabled={props.disableFields}
+								disabled={disableFields}
 							>
 								Add Analysis
 							</Button>

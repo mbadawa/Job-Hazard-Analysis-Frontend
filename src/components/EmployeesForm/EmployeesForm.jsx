@@ -3,23 +3,23 @@ import ClearIcon from "@mui/icons-material/Clear";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-function EmployeesForm(props) {
+function EmployeesForm({ employee, setEmployee, disableFields }) {
 	const handleAddEmployee = () => {
-		props.setEmployee([
-			...props.employee,
+		setEmployee([
+			...employee,
 			{ employeeName: "", employeeID: "", employeeCertifications: "" },
 		]);
 	};
 	const handleEmployeeUpdate = (e, index) => {
 		const { name, value } = e.target;
-		const list = [...props.employee];
+		const list = [...employee];
 		list[index][name] = value;
-		props.setEmployee(list);
+		setEmployee(list);
 	};
 	const handleRemoveEmployee = (index) => {
-		const list = [...props.employee];
+		const list = [...employee];
 		list.splice(index, 1);
-		props.setEmployee(list);
+		setEmployee(list);
 	};
 	return (
 		<div className="overflow-x-auto relative">
@@ -39,14 +39,13 @@ function EmployeesForm(props) {
 					</tr>
 				</thead>
 				<tbody className="">
-					{props.employee.map((object, index) => (
+					{employee.map((object, index) => (
 						<tr key={index} className="bg-gray-50 shadow border-b ">
 							<th
 								scope="row"
 								className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap"
 							>
 								<TextField
-									id=""
 									label="Full Name"
 									variant="filled"
 									className="w-full"
@@ -54,12 +53,11 @@ function EmployeesForm(props) {
 									name="employeeName"
 									value={object.employeeName}
 									onChange={(e) => handleEmployeeUpdate(e, index)}
-									disabled={props.disableFields}
+									disabled={disableFields}
 								/>
 							</th>
 							<td className="py-4 px-6">
 								<TextField
-									id=""
 									label="Employee ID"
 									variant="filled"
 									className="w-full"
@@ -67,12 +65,11 @@ function EmployeesForm(props) {
 									name="employeeID"
 									value={object.employeeID}
 									onChange={(e) => handleEmployeeUpdate(e, index)}
-									disabled={props.disableFields}
+									disabled={disableFields}
 								/>
 							</td>
 							<td className="py-4 px-6 flex items-center gap-3">
 								<TextField
-									id=""
 									label="Employee Certifications"
 									placeholder="List all employee certifications using , to seprate"
 									variant="filled"
@@ -81,9 +78,9 @@ function EmployeesForm(props) {
 									name="employeeCertifications"
 									value={object.employeeCertifications}
 									onChange={(e) => handleEmployeeUpdate(e, index)}
-									disabled={props.disableFields}
+									disabled={disableFields}
 								/>
-								{props.employee.length > 1 && props.disableFields === false && (
+								{employee.length > 1 && disableFields === false && (
 									<ClearIcon
 										className="cursor-pointer"
 										sx={{ color: "red" }}
@@ -111,7 +108,7 @@ function EmployeesForm(props) {
 									e.preventDefault();
 									handleAddEmployee();
 								}}
-								disabled={props.disableFields}
+								disabled={disableFields}
 							>
 								Add Employee
 							</Button>
