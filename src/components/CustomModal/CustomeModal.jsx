@@ -3,7 +3,14 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-function CustomeModal(props) {
+function CustomeModal({
+	openModal,
+	handleOpenCloseModal,
+	title,
+	description,
+	actionButton,
+	actionButtonFunction,
+}) {
 	const style = {
 		position: "absolute",
 		top: "50%",
@@ -16,8 +23,8 @@ function CustomeModal(props) {
 	};
 	return (
 		<Modal
-			open={props.openModal}
-			onClose={props.handleOpenCloseModal}
+			open={openModal}
+			onClose={handleOpenCloseModal}
 			aria-labelledby="modal-modal-title"
 			aria-describedby="modal-modal-description"
 		>
@@ -31,10 +38,10 @@ function CustomeModal(props) {
 							fontWeight: "bold",
 						}}
 					>
-						{props.title}
+						{title}
 					</Typography>
 					<Typography id="modal-modal-description" sx={{ mt: 2 }}>
-						{props.description}
+						{description}
 					</Typography>
 				</div>
 				<div className="flex items-center gap-3">
@@ -48,14 +55,14 @@ function CustomeModal(props) {
 						}}
 						variant="contained"
 						onClick={() => {
-							props.actionButtonFunction();
-							props.handleOpenCloseModal();
+							actionButtonFunction();
+							handleOpenCloseModal();
 						}}
 					>
-						{props.actionButton}
+						{actionButton}
 					</Button>
 					<Button
-						onClick={props.handleOpenCloseModal}
+						onClick={handleOpenCloseModal}
 						sx={{ color: "#374151", padding: "10px" }}
 						variant="text"
 					>

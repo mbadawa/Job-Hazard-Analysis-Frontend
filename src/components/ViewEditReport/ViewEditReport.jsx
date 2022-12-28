@@ -16,7 +16,15 @@ import InitialValues from "../../utils/InitialValues";
 import AnalysisForm from "../AnalysisForm/AnalysisForm";
 import EmployeesForm from "../EmployeesForm/EmployeesForm";
 import GeneralInformationsForm from "../GeneralInformationsForm/GeneralInformationsForm";
-function ViewReport(props) {
+function ViewReport({
+	id,
+	handleShowSuccessAlert,
+	setHideApiErrorMessages,
+	handleHideAllApiErrorMessages,
+	setSuccessMessage,
+	setApiErrorMessage,
+	handleUpdateList,
+}) {
 	const [expanded, setExpanded] = useState("generalInfo");
 	const [disableFields, setDisableFields] = useState(true);
 	const [reportData, setReportData] = useState();
@@ -37,12 +45,10 @@ function ViewReport(props) {
 	const handleCloseModal = () => {
 		document.querySelector(".dialog_container").style.display = "none";
 	};
-	const handleUpdateList = () => {
-		props.handleUpdateList();
-	};
+
 	useEffect(() => {
 		axios
-			.get(`http://localhost:5000/api/findreport/${props.id}`)
+			.get(`http://localhost:5000/api/findreport/${id}`)
 			.then((res) => {
 				if (res.data) {
 					let { employees, analysis, indoorOrOutdoor } = res?.data;
@@ -53,7 +59,7 @@ function ViewReport(props) {
 				}
 			})
 			.catch((err) => console.error(err.message));
-	}, [props.id]);
+	}, [id]);
 
 	//   Assigining employees and analysis inputs to the initalvalues object
 
@@ -68,16 +74,16 @@ function ViewReport(props) {
 			data.values.analysis = JSON.stringify(analysisArray);
 			data.values.indoorOrOutdoor = JSON.stringify(indoorOrOutdoor);
 			axios
-				.put(`http://localhost:5000/api/update/${props.id}`, data.values)
+				.put(`http://localhost:5000/api/update/${id}`, data.values)
 				.then((res) => {
 					console.log(res);
-					props.handleShowSuccessAlert();
-					props.handleHideAllApiErrorMessages();
-					props.setSuccessMessage("JHA Report been updated!");
+					handleShowSuccessAlert();
+					handleHideAllApiErrorMessages();
+					setSuccessMessage("JHA Report been updated!");
 				})
 				.catch((err) => {
-					props.setApiErrorMessage(err.response.data.errors);
-					props.setHideApiErrorMessages(true);
+					setApiErrorMessage(err.response.data.errors);
+					setHideApiErrorMessages(true);
 					console.error(err);
 				});
 			handleUpdateList();
